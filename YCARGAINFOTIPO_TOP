@@ -1,0 +1,63 @@
+*&---------------------------------------------------------------------*
+*&  Include           YCARGAINFOTIPO_TOP
+*&---------------------------------------------------------------------*
+REPORT ycargainfotipo_0171_mhp.
+TABLES: pernr. "--> DATOS DE PERSONAL
+INFOTYPES: 0001, 0171.
+
+*ESTRUCTURA DE LA TABBAL GTY_MOSTRAR
+TYPES: BEGIN OF gty_mostrar.
+TYPES: numpersonal TYPE pernr,
+fechaini TYPE  begda,
+fechafini TYPE endda,
+numregistro TYPE seqnr,
+fechamodi TYPE aedtm,
+nombrerespon TYPE uname,
+END OF gty_mostrar,
+gtt_mostrar TYPE STANDARD TABLE OF gty_mostrar.
+
+*AÑADIR LINEA PARA METER DATOS.
+DATA: gt_tabla TYPE  TABLE OF gty_mostrar,
+      gs_linea TYPE gty_mostrar.
+*PARA EL ALV
+
+INCLUDE zisalv_table_top.
+INCLUDE zisalv_table_forms.
+
+" Clase para eventos en el ALV como doble click
+**----------------------------------------------------------------------*
+* *       class lcl_event_receiver definition
+* *----------------------------------------------------------------------*
+* *
+* *----------------------------------------------------------------------*
+
+CLASS lcl_event_receiver DEFINITION.
+  PUBLIC SECTION.
+    METHODS:
+      on_double_click       FOR EVENT double_click     OF cl_salv_events_table
+                            IMPORTING row column.
+ENDCLASS. "lcl_event_receiver DEFINITION
+
+*----------------------------------------------------------------------*
+* *       CLASS lcl_event_receiver IMPLEMENTATION
+* *----------------------------------------------------------------------*
+* *
+* *----------------------------------------------------------------------*
+CLASS lcl_event_receiver IMPLEMENTATION.
+  METHOD on_double_click.
+    CLEAR gs_linea.
+    READ TABLE gt_tabla INTO gs_linea INDEX row.
+    IF sy-subrc IS INITIAL.
+      MESSAGE i398(00) WITH 'Se realizo doble click sobre linea:' row.
+    ENDIF.
+  ENDMETHOD.                    "ON_DOUBLE_CLICK
+ENDCLASS. "lcl_event_receiver IMPLEMENTATION
+
+DATA: g_event_receiver TYPE REF TO lcl_event_receiver.
+
+
+*-----------------------------------------------------------------------------------*
+*-----------------------------------------------------------------------------------*
+DATA:   okcode   TYPE sy-ucomm.
+*-----------------------------------------------------------------------------------*
+*-----------------------------------------------------------------------------------*
