@@ -1,0 +1,24 @@
+*&---------------------------------------------------------------------*
+*&INFORMACIÓN GENERAL
+*&WRICEF                 :   Cargar datos del infotipo 0171
+*&Nombre del Programa    :   YCARGAINFOTIPO_0171_MHP
+*&Título                 :   CARGA INFOTIPO 0171
+*&Autor                  :   MARIA HERRERO
+*&Fecha de creación      :   02.06.2022 09:41:51
+*&Tipo                   :   Programa ejectuable
+*&Llamado por            :
+*&Descripción            :
+*&
+*&*************************************************************************
+
+
+INCLUDE ycargainfotipo_top. "AQUI SE DECLARAN LAS TABLAS Y DATOS NECESARIOS
+INCLUDE ycargainfotipo_sel. "AQUI SE PONE LO QUE VA A APARECER EN LA PRIMERA PANTALLA DE SELECCION
+INCLUDE ycargainfotipo_eve. "ES EL MAIN
+INCLUDE ycargainfotipo_f01. "DONDE SE METEN LAS FUNCIONES
+
+INCLUDE ycargainfotipo_0171_mhp_stao02.
+
+INCLUDE ycargainfotipo_0171_mhp_prio01.
+
+INCLUDE ycargainfotipo_0171_mhp_usei01.
