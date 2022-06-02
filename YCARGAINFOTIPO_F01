@@ -1,0 +1,129 @@
+*&---------------------------------------------------------------------*
+*&  Include           YCARGAINFOTIPO_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F_INIT
+*&---------------------------------------------------------------------*
+
+FORM f_init.
+
+  REFRESH: gt_tabla. "ACTUALIZAMOS LA TABLA, POR SI HAY MAS O MENOS REGISTROS
+  CLEAR: gs_linea. "BORRAMOS LA LINEA (ESTRUCTURA)
+
+ENDFORM.                    "f_init
+
+*&---------------------------------------------------------------------*
+*&      Form  F_GETDATA
+*&---------------------------------------------------------------------*
+
+FORM f_getdata. "ES UN GET DATA... CON SQL PROPIO DE HR
+
+  PROVIDE  pernr begda endda seqnr aedtm uname FROM p0171
+      BETWEEN p_fecha AND p_fecha.
+    "SI LA FECHA QUE INTRODUCIMOS ES MAYOR O IGUAL A LA INICIAL Y MENOR O IGUAL A LA FINAL
+
+*     Meter los valores en una variable tipo estructura/linea
+
+    gs_linea-numpersonal = p0171-pernr.
+    gs_linea-fechaini = p0171-begda.
+    gs_linea-fechafini = p0171-endda.
+    gs_linea-numregistro = p0171-SEQNR.
+    gs_linea-fechamodi = p0171-aedtm.
+    gs_linea-nombrerespon = p0171-uname.
+
+*     Posteriormente insertar la linea en la variable Tabla interna que hemos creado.
+    APPEND gs_linea TO gt_tabla.
+
+
+  ENDPROVIDE.
+
+ENDFORM.                    "f_getdata
+
+
+*  *&---------------------------------------------------------------------*
+*  *&      Form  crear_cabecera
+*  *&---------------------------------------------------------------------*
+*  *       text
+*  *---------------------------------------------------------------------*
+
+FORM crear_cabecera.
+
+  gl_header-titulo1 = 'Visualización por ALV'.
+  APPEND gl_header TO gt_header.
+
+  CLEAR gl_header.
+  CONCATENATE 'Usuario:' sy-uname INTO gl_header-titulo1 SEPARATED BY space. "NOS INDICA EL NOMBRE DEL USUARIO
+  APPEND gl_header TO gt_header.
+
+  WRITE sy-datum TO gl_header-titulo1 DD/MM/YYYY. "NOS PONE LA FECHA ACTUAL EN EL FORMATO QUE LE INDICAMOS
+  CONCATENATE 'Fecha Ejecución:' gl_header-titulo1 INTO gl_header-titulo1 SEPARATED BY space.
+  APPEND gl_header TO gt_header.
+
+  PERFORM set_header  TABLES gt_header USING ''.
+
+ENDFORM. "crear_cabecera
+
+
+
+
+*  *&---------------------------------------------------------------------*
+*  *&      Form  PRINT_ALV
+*  *&---------------------------------------------------------------------*
+*  *       text
+*  *----------------------------------------------------------------------*
+*  *  -->  p1        text
+*  *  <--  p2        text
+*  *----------------------------------------------------------------------*
+*
+
+FORM print_alv.
+
+*  ***Con esto se crea el objeto del ALV
+  PERFORM factory_alv.
+
+*  ***Con esto podemos agregar barra de herramienta propia al ALV
+*  *   PERFORM set_status_gui
+*  *                 USING
+*  *                     'STANDARD'.
+
+*  ***Se envian funciones por defecto al ALV
+  PERFORM set_functions
+               USING
+                  'X'.
+
+*  ***  Se agregan eventos al ALV como el del doble click
+  lr_events = gr_table->get_event( ).
+  CREATE OBJECT g_event_receiver.
+  SET HANDLER g_event_receiver->on_double_click      FOR lr_events.
+
+*  ***Se asigna atributos especiales a las columnas del ALV
+  PERFORM asignar_atributos.
+
+*  ***Se crea la cabecera del ALV
+  PERFORM crear_cabecera.
+
+* ***con esto se asigna el layout por defecto del ALV
+**  lr_layout = gr_table->get_layout( ).
+*  *  lr_layout->set_initial_layout( p_layout ).
+*
+*  ***Se muestra el ALV
+  PERFORM display_grid
+                USING space.
+ENDFORM. " PRINT_ALV
+
+**&---------------------------------------------------------------------*
+* *&      Form  ASIGNAR_ATRIBUTOS
+* *&---------------------------------------------------------------------*
+* *       text
+* *----------------------------------------------------------------------*
+* *  -->  p1        text
+* *  <--  p2        text
+* *----------------------------------------------------------------------*
+
+FORM asignar_atributos .
+
+  PERFORM set_col_attb USING: 'ID_EMP' 'LTEXT' 'CARACT_CORTO'.
+  PERFORM set_col_attb USING: 'ID_EMP' 'MTEXT' 'CARACT_MEDIANO'.
+  PERFORM set_col_attb USING: 'ID_EMP' 'STEXT' 'CARACT_ESTE ES EL MAS GRANDE'.
+
+ENDFORM. " ASIGNAR_ATRIBUTOS
