@@ -1,0 +1,7 @@
+*&---------------------------------------------------------------------*
+*&  Include           YCARGAINFOTIPO_SEL
+*&---------------------------------------------------------------------*
+*PARAMETERS
+SELECTION-SCREEN BEGIN OF BLOCK bk1 NO INTERVALS.
+PARAMETERS: p_fecha TYPE begda.
+SELECTION-SCREEN END OF BLOCK bk1.
